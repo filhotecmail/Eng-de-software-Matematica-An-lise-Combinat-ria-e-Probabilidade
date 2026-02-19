@@ -72,6 +72,14 @@ contains
   !   - Robustez: A rotina não valida se a string 'line' tem tamanho suficiente 
   !     para o conteúdo do arquivo (risco de truncamento se len(line) < len(file)).
   !=============================================================================
+  !------------------------------------------------------------------------------
+  ! Subroutine: read_input_line
+  ! Propósito: Ler a primeira linha do arquivo de entrada contendo os intervalos
+  ! Parâmetros:
+  !   - path (in): caminho absoluto do arquivo
+  !   - line (out): linha lida com todos os intervalos
+  ! Observações: usa unidade fixa, retorna linha vazia se falhar ao abrir
+  !------------------------------------------------------------------------------
   subroutine read_input_line(path, line)
     ! Lê a linha única de entrada contendo os intervalos
     ! path: caminho absoluto do arquivo de entrada
@@ -87,6 +95,15 @@ contains
     close(unit)            ! Fecha arquivo
   end subroutine read_input_line
 
+  !------------------------------------------------------------------------------
+  ! Subroutine: parse_line
+  ! Propósito: Converter a linha em intervalos [lo,hi] no formato "a-b"
+  ! Parâmetros:
+  !   - line (in): string com tokens separados por vírgula
+  !   - intervals (out): vetor preenchido com os intervalos
+  !   - count (out): quantidade de intervalos válidos
+  ! Observações: ignora tokens vazios/malformados; limita ao tamanho do vetor
+  !------------------------------------------------------------------------------
   subroutine parse_line(line, intervals, count)
     ! Converte a linha em tokens "a-b" separados por vírgula e
     ! preenche o vetor de intervalos [lo,hi]
