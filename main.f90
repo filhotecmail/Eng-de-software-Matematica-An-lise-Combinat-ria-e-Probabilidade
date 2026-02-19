@@ -263,6 +263,15 @@ contains
   !   candidatos gerados. O limite max_vals é uma restrição de design; 
   !   valores excedentes são ignorados silenciosamente para manter estabilidade.
   !=============================================================================
+  !------------------------------------------------------------------------------
+  ! Subroutine: compute_total
+  ! Propósito: Gerar N = X*(10^k+1) nos intervalos, deduplicar e somar
+  ! Parâmetros:
+  !   - intervals (in): vetor de intervalos [lo,hi]
+  !   - count (in): quantidade de intervalos válidos
+  !   - total (out): soma dos IDs inválidos únicos
+  ! Observações: usa ordenação para deduplicação; limita memória por max_vals
+  !------------------------------------------------------------------------------
   subroutine compute_total(intervals, count, total)
     ! Gera todos os candidatos inválidos N = X*(10^k+1) nos intervalos
     ! Deduplica e soma os valores únicos
