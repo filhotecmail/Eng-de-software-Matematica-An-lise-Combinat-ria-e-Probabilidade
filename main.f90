@@ -146,6 +146,7 @@ contains
     integer, intent(in) :: count
     integer(ik), intent(out) :: total
     integer :: k, idx
+    integer :: unique_count
     integer(ik) :: i
     integer(ik) :: bk, xlo, xhi, lo_k, hi_k
     integer, parameter :: max_vals = 300000
@@ -180,7 +181,6 @@ contains
     print *, 'Deduplicando e somando pares repetidos...'
     if (nvals > 1) call quicksort(vals, 1, nvals)
     total = 0_ik
-    integer :: unique_count
     unique_count = 0
     do i = 1_ik, nvals
       if (i == 1_ik .or. vals(i) /= vals(i-1)) then
@@ -196,6 +196,7 @@ contains
     character(len=4096) :: input_line
     type(interval_t) :: intervals(1024)
     integer :: count
+    integer :: ii
     integer(ik) :: total
     ! Caminho absoluto para a entrada com uma linha de intervalos
     print *, 'Lendo entradas...'
@@ -205,7 +206,6 @@ contains
     call parse_line(input_line, intervals, count)
     print *, 'Total de intervalos lidos: ', count
     if (count > 0) then
-      integer :: ii
       do ii = 1, count
         print *, 'Intervalo ', ii, ': ', intervals(ii)%lo, '-', intervals(ii)%hi
       end do
