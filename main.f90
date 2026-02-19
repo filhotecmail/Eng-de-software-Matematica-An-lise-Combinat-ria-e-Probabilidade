@@ -25,14 +25,17 @@
 
 program aoc_day2
   implicit none
+  ! Ponto de entrada: delega execução ao procedimento principal
   call run
 
 end program aoc_day2
 
 module aoc_day2_mod
   implicit none
+  ! Kind inteiro com ~64 bits para suportar IDs grandes
   integer, parameter :: ik = selected_int_kind(18)
   type interval_t
+    ! Limites do intervalo [lo, hi]
     integer(ik) :: lo
     integer(ik) :: hi
   end type interval_t
@@ -41,12 +44,12 @@ contains
     character(len=*), intent(in) :: path
     character(len=*), intent(out) :: line
     integer :: unit, ios
-    unit = 10
-    line = ''
-    open(unit=unit, file=path, status='old', iostat=ios)
-    if (ios /= 0) return
-    read(unit,'(A)') line
-    close(unit)
+    unit = 10              ! Unidade de arquivo
+    line = ''              ! Inicializa linha de saída
+    open(unit=unit, file=path, status='old', iostat=ios) ! Abre arquivo existente
+    if (ios /= 0) return   ! Falha ao abrir: retorna linha vazia
+    read(unit,'(A)') line  ! Lê linha única contendo todos os intervalos
+    close(unit)            ! Fecha arquivo
   end subroutine read_input_line
 
   subroutine parse_line(line, intervals, count)
@@ -57,11 +60,11 @@ contains
     character(len=128) :: t, a, b
     integer :: pos, lenl, comma_pos, hypos, n
     integer(ik) :: lo, hi
-    s = trim(line)
+    s = trim(line)         ! Normaliza espaços finais
     lenl = len_trim(s)
     n = 0
     pos = 1
-    do
+    do                     ! Varre tokens separados por vírgula
       if (pos > lenl) exit
       comma_pos = index(s(pos:lenl), ',')
       if (comma_pos == 0) then
@@ -72,11 +75,11 @@ contains
         pos = pos + comma_pos
       end if
       if (len_trim(t) == 0) cycle
-      hypos = index(t, '-')
+      hypos = index(t, '-') ! Divide token em "a-b"
       if (hypos == 0) cycle
       a = trim(t(1:hypos-1))
       b = trim(t(hypos+1:len_trim(t)))
-      read(a, *) lo
+      read(a, *) lo        ! Converte limites
       read(b, *) hi
       if (lo <= hi) then
         if (n < size(intervals)) then
@@ -86,14 +89,16 @@ contains
         end if
       end if
     end do
-    count = n
+    count = n              ! Retorna quantidade de intervalos parseados
   end subroutine parse_line
 
   subroutine run
     character(len=4096) :: input_line
     type(interval_t) :: intervals(1024)
     integer :: count
+    ! Caminho absoluto para a entrada com uma linha de intervalos
     call read_input_line('c:\projetos de estudos\AdventofCode\202502\Enunciado do problema\Imput de dados par analise.txt', input_line)
+    ! Converte a linha em vetor de intervalos [lo,hi]
     call parse_line(input_line, intervals, count)
   end subroutine run
 end module aoc_day2_mod
