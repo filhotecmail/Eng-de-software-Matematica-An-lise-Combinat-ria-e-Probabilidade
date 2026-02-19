@@ -24,6 +24,17 @@
 ! =================================================================================
 
 
+!==============================================================================
+! Módulo: aoc_day2_mod
+! Finalidade: Define tipos e rotinas auxiliares e de processamento do Dia 2
+! Conteúdo:
+!   - Tipo interval_t: representa um intervalo [lo,hi]
+!   - I/O: read_input_line (lê linha única da entrada)
+!   - Parsing: parse_line (converte string em intervalos)
+!   - Helpers: pow10, ceil_div, quicksort
+!   - Processamento: compute_total (gera, deduplica e soma inválidos)
+!   - Orquestração: run (fluxo principal)
+!==============================================================================
 module aoc_day2_mod
   implicit none
   ! Kind inteiro com ~64 bits para suportar IDs grandes
@@ -34,6 +45,33 @@ module aoc_day2_mod
     integer(ik) :: hi
   end type interval_t
 contains
+
+  !=============================================================================
+  ! SUBROUTINE: read_input_line
+  !
+  ! DESCRIÇÃO:
+  !   Realiza o encapsulamento da leitura de arquivo para extrair o conteúdo 
+  !   bruto da primeira linha. Projetada especificamente para arquivos de 
+  !   entrada única (single-line inputs) contendo strings de intervalos.
+  !
+  ! FLUXO DE EXECUÇÃO (Pipeline):
+  !   1. Setup: Inicializa a string de saída para evitar lixo de memória.
+  !   2. Abertura: Tenta abrir o arquivo no modo 'OLD' (deve existir previamente).
+  !   3. Tratamento de Erro Silencioso: Se o arquivo não puder ser aberto (ios /= 0),
+  !      a rotina retorna imediatamente, deixando 'line' vazia para o chamador tratar.
+  !   4. Leitura: Utiliza o descritor de formato '(A)' para leitura alfanumérica.
+  !   5. Cleanup: Fecha o descritor de unidade (Unit 10) para liberar o recurso.
+  !
+  ! PARÂMETROS:
+  !   [in]  path : String com o caminho absoluto ou relativo do arquivo fonte.
+  !   [out] line : Buffer que receberá o conteúdo lido (passado por referência).
+  !
+  ! CONSIDERAÇÕES DE ENGENHARIA:
+  !   - Acoplamento: A unidade (Unit 10) é hardcoded, o que pode gerar conflitos 
+  !     se outras partes do sistema usarem o mesmo ID simultaneamente.
+  !   - Robustez: A rotina não valida se a string 'line' tem tamanho suficiente 
+  !     para o conteúdo do arquivo (risco de truncamento se len(line) < len(file)).
+  !=============================================================================
   subroutine read_input_line(path, line)
     ! Lê a linha única de entrada contendo os intervalos
     ! path: caminho absoluto do arquivo de entrada
