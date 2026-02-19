@@ -193,6 +193,15 @@ contains
     end if
   end function ceil_div
 
+  !------------------------------------------------------------------------------
+  ! Subroutine: quicksort
+  ! Propósito: Ordenar vetor de inteiros(ik) in-place (QuickSort clássico)
+  ! Parâmetros:
+  !   - a (inout): vetor a ordenar
+  !   - l (in): índice inicial (1-based)
+  !   - r (in): índice final (1-based)
+  ! Observações: particiona por pivot e recorre nas metades
+  !------------------------------------------------------------------------------
   recursive subroutine quicksort(a, l, r)
     ! Ordena vetor de inteiros(ik) in-place usando QuickSort
     ! a: vetor a ordenar
