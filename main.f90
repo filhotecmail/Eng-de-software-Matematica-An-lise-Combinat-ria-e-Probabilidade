@@ -327,6 +327,13 @@ contains
     deallocate(vals)
   end subroutine compute_total
 
+  !------------------------------------------------------------------------------
+  ! Subroutine: run
+  ! Propósito: Orquestrar leitura, parsing, geração e soma; imprimir logs
+  ! Parâmetros: nenhum
+  ! Saídas: imprime intervalos, candidatos e soma final
+  ! Observações: caminho de entrada absoluto; logs detalhados passo a passo
+  !------------------------------------------------------------------------------
   subroutine run
     ! Fluxo principal: leitura, parsing, geração e soma, impressão
     character(len=4096) :: input_line
