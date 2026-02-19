@@ -25,5 +25,75 @@
 
 program aoc_day2
   implicit none
+  call run
 
 end program aoc_day2
+
+module aoc_day2_mod
+  implicit none
+  integer, parameter :: ik = selected_int_kind(18)
+  type interval_t
+    integer(ik) :: lo
+    integer(ik) :: hi
+  end type interval_t
+contains
+  subroutine read_input_line(path, line)
+    character(len=*), intent(in) :: path
+    character(len=*), intent(out) :: line
+    integer :: unit, ios
+    unit = 10
+    line = ''
+    open(unit=unit, file=path, status='old', iostat=ios)
+    if (ios /= 0) return
+    read(unit,'(A)') line
+    close(unit)
+  end subroutine read_input_line
+
+  subroutine parse_line(line, intervals, count)
+    character(len=*), intent(in) :: line
+    type(interval_t), intent(out) :: intervals(:)
+    integer, intent(out) :: count
+    character(len=4096) :: s
+    character(len=128) :: t, a, b
+    integer :: pos, lenl, comma_pos, hypos, n
+    integer(ik) :: lo, hi
+    s = trim(line)
+    lenl = len_trim(s)
+    n = 0
+    pos = 1
+    do
+      if (pos > lenl) exit
+      comma_pos = index(s(pos:lenl), ',')
+      if (comma_pos == 0) then
+        t = trim(s(pos:lenl))
+        pos = lenl + 1
+      else
+        t = trim(s(pos:pos+comma_pos-2))
+        pos = pos + comma_pos
+      end if
+      if (len_trim(t) == 0) cycle
+      hypos = index(t, '-')
+      if (hypos == 0) cycle
+      a = trim(t(1:hypos-1))
+      b = trim(t(hypos+1:len_trim(t)))
+      read(a, *) lo
+      read(b, *) hi
+      if (lo <= hi) then
+        if (n < size(intervals)) then
+          n = n + 1
+          intervals(n)%lo = lo
+          intervals(n)%hi = hi
+        end if
+      end if
+    end do
+    count = n
+  end subroutine parse_line
+
+  subroutine run
+    character(len=4096) :: input_line
+    type(interval_t) :: intervals(1024)
+    integer :: count
+    call read_input_line('c:\projetos de estudos\AdventofCode\202502\Enunciado do problema\Imput de dados par analise.txt', input_line)
+    call parse_line(input_line, intervals, count)
+  end subroutine run
+end module aoc_day2_mod
