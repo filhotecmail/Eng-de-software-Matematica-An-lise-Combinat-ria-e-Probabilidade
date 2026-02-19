@@ -20,6 +20,8 @@ gfortran -std=f95 -Wall -O2 -o aoc_day2.exe main.f90
 ./aoc_day2.exe
 ```
 
+![alt text](image.png)
+
 ## Estrutura
 - `main.f90`: ponto de entrada do programa, estrutura inicial e cabeçalho.
 
