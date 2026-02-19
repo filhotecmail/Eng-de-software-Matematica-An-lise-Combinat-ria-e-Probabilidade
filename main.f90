@@ -35,6 +35,9 @@ module aoc_day2_mod
   end type interval_t
 contains
   subroutine read_input_line(path, line)
+    ! Lê a linha única de entrada contendo os intervalos
+    ! path: caminho absoluto do arquivo de entrada
+    ! line: string retornada com o conteúdo da primeira linha
     character(len=*), intent(in) :: path
     character(len=*), intent(out) :: line
     integer :: unit, ios
@@ -47,6 +50,11 @@ contains
   end subroutine read_input_line
 
   subroutine parse_line(line, intervals, count)
+    ! Converte a linha em tokens "a-b" separados por vírgula e
+    ! preenche o vetor de intervalos [lo,hi]
+    ! line: string com todos os intervalos
+    ! intervals: saída com até size(intervals) intervalos
+    ! count: quantidade efetiva preenchida
     character(len=*), intent(in) :: line
     type(interval_t), intent(out) :: intervals(:)
     integer, intent(out) :: count
@@ -87,6 +95,9 @@ contains
   end subroutine parse_line
 
   pure function pow10(k) result(p)
+    ! Calcula 10^k como inteiro(ik), sem recorrer a exponenciação
+    ! k: expoente inteiro
+    ! p: resultado 10^k
     integer, intent(in) :: k
     integer(ik) :: p
     integer :: i
@@ -97,6 +108,10 @@ contains
   end function pow10
 
   pure function ceil_div(a, b) result(c)
+    ! Retorna ceil(a/b) para inteiros(ik), assumindo b>0
+    ! a: numerador
+    ! b: denominador
+    ! c: resultado arredondado para cima
     integer(ik), intent(in) :: a, b
     integer(ik) :: c
     if (b <= 0_ik) then
@@ -107,6 +122,9 @@ contains
   end function ceil_div
 
   recursive subroutine quicksort(a, l, r)
+    ! Ordena vetor de inteiros(ik) in-place usando QuickSort
+    ! a: vetor a ordenar
+    ! l,r: índices de início e fim (1-based)
     integer(ik), intent(inout) :: a(:)
     integer, intent(in) :: l, r
     integer(ik) :: pivot, tmp
@@ -134,7 +152,41 @@ contains
     call quicksort(a, i, r)
   end subroutine quicksort
 
+ !=============================================================================
+  ! SUBROUTINE: compute_total
+  !
+  ! DESCRIÇÃO:
+  !   Calcula o somatório de valores únicos (candidatos) baseados na relação 
+  !   v = X * (10^k + 1). A rotina varre múltiplos intervalos de entrada e 
+  !   identifica valores de X que, quando multiplicados pelo fator B_k, 
+  !   caem dentro do intervalo fornecido e respeitam a janela de magnitude de k.
+  !
+  ! LÓGICA DE ENGENHARIA:
+  !   1. Geração: Para cada ordem k [1, 5], define-se um multiplicador B_k.
+  !      Os limites [xlo, xhi] são derivados por divisão inteira/teto, 
+  !      garantindo que o produto resulte em um valor dentro do intervalo original.
+  !   2. Clamping: Aplica-se restrição para que X pertença ao intervalo [10^k-1, 10^k-1].
+  !   3. Coleta: Os candidatos são armazenados no array 'vals'. O tamanho é fixo 
+  !      em 300.000 (max_vals) para evitar estouro de memória dinâmica excessiva.
+  !   4. Processamento de Set: Como diferentes k ou intervalos podem gerar 
+  !      colisões (mesmo valor final), o array é ordenado via Quicksort e 
+  !      percorrido linearmente para somar apenas ocorrências únicas.
+  !
+  ! PARÂMETROS:
+  !   [in]  intervals : Lista de estruturas de intervalo (lo, hi).
+  !   [in]  count     : Número de intervalos válidos no array.
+  !   [out] total     : Acumulador de 64-bit (ik) com o somatório dos únicos.
+  !
+  ! NOTA TÉCNICA:
+  !   A complexidade temporal é O(k * count + N log N), onde N é o total de 
+  !   candidatos gerados. O limite max_vals é uma restrição de design; 
+  !   valores excedentes são ignorados silenciosamente para manter estabilidade.
+  !=============================================================================
   subroutine compute_total(intervals, count, total)
+    ! Gera todos os candidatos inválidos N = X*(10^k+1) nos intervalos
+    ! Deduplica e soma os valores únicos
+    ! intervals,count: entrada de intervalos
+    ! total: soma dos inválidos únicos
     type(interval_t), intent(in) :: intervals(:)
     integer, intent(in) :: count
     integer(ik), intent(out) :: total
@@ -186,6 +238,7 @@ contains
   end subroutine compute_total
 
   subroutine run
+    ! Fluxo principal: leitura, parsing, geração e soma, impressão
     character(len=4096) :: input_line
     type(interval_t) :: intervals(1024)
     integer :: count
