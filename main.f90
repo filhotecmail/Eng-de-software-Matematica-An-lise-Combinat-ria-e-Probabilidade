@@ -359,6 +359,11 @@ contains
   end subroutine run
 end module aoc_day2_mod
 
+!==============================================================================
+! Programa: aoc_day2
+! Finalidade: Ponto de entrada; invoca run do módulo para executar o fluxo
+! Observações: separa definição de módulo e programa para compilar o USE
+!==============================================================================
 program aoc_day2
   use aoc_day2_mod
   implicit none
