@@ -149,6 +149,14 @@ contains
     count = n              ! Retorna quantidade de intervalos parseados
   end subroutine parse_line
 
+  !------------------------------------------------------------------------------
+  ! Function: pow10
+  ! Propósito: Calcular 10^k como inteiro(ik) por multiplicação iterativa
+  ! Parâmetros:
+  !   - k (in): expoente não-negativo
+  ! Retorno:
+  !   - p: 10^k
+  !------------------------------------------------------------------------------
   pure function pow10(k) result(p)
     ! Calcula 10^k como inteiro(ik), sem recorrer a exponenciação
     ! k: expoente inteiro
@@ -162,6 +170,15 @@ contains
     end do
   end function pow10
 
+  !------------------------------------------------------------------------------
+  ! Function: ceil_div
+  ! Propósito: Retornar ceil(a/b) para inteiros(ik), b>0
+  ! Parâmetros:
+  !   - a (in): numerador
+  !   - b (in): denominador (>0)
+  ! Retorno:
+  !   - c: resultado arredondado para cima
+  !------------------------------------------------------------------------------
   pure function ceil_div(a, b) result(c)
     ! Retorna ceil(a/b) para inteiros(ik), assumindo b>0
     ! a: numerador
