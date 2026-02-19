@@ -157,26 +157,38 @@ contains
       bk = pow10(k) + 1_ik
       lo_k = pow10(k-1)
       hi_k = pow10(k) - 1_ik
+      print *, 'Processando k = ', k, ' com B_k = ', bk
       do idx = 1, count
         xlo = ceil_div(intervals(idx)%lo, bk)
         xhi = intervals(idx)%hi / bk
         if (xlo < lo_k) xlo = lo_k
         if (xhi > hi_k) xhi = hi_k
         if (xlo <= xhi) then
+          print *, 'Intervalo ', idx, ' [', intervals(idx)%lo, '-', intervals(idx)%hi, '] => X em [', xlo, ',', xhi, ']'
           do i = 0_ik, xhi - xlo
             if (nvals < max_vals) then
               nvals = nvals + 1
               vals(nvals) = (xlo + i) * bk
+              print *, 'Par repetido encontrado: ', vals(nvals)
             end if
           end do
+        else
+          print *, 'Intervalo ', idx, ' não gera candidatos para k = ', k
         end if
       end do
     end do
+    print *, 'Deduplicando e somando pares repetidos...'
     if (nvals > 1) call quicksort(vals, 1, nvals)
     total = 0_ik
-    do i = 1, nvals
-      if (i == 1 .or. vals(i) /= vals(i-1)) total = total + vals(i)
+    integer :: unique_count
+    unique_count = 0
+    do i = 1_ik, nvals
+      if (i == 1_ik .or. vals(i) /= vals(i-1)) then
+        total = total + vals(i)
+        unique_count = unique_count + 1
+      end if
     end do
+    print *, 'Total de pares únicos: ', unique_count
     deallocate(vals)
   end subroutine compute_total
 
@@ -186,10 +198,20 @@ contains
     integer :: count
     integer(ik) :: total
     ! Caminho absoluto para a entrada com uma linha de intervalos
+    print *, 'Lendo entradas...'
     call read_input_line('c:\projetos de estudos\AdventofCode\202502\Enunciado do problema\Imput de dados par analise.txt', input_line)
     ! Converte a linha em vetor de intervalos [lo,hi]
+    print *, 'Analisando entradas...'
     call parse_line(input_line, intervals, count)
+    print *, 'Total de intervalos lidos: ', count
+    if (count > 0) then
+      integer :: ii
+      do ii = 1, count
+        print *, 'Intervalo ', ii, ': ', intervals(ii)%lo, '-', intervals(ii)%hi
+      end do
+    end if
+    print *, 'Iniciando geração de pares repetidos e soma...'
     call compute_total(intervals, count, total)
-    print *, total
+    print *, 'A Soma dos Pares repetidos: ', total
   end subroutine run
 end module aoc_day2_mod
