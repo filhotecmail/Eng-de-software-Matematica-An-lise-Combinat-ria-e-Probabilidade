@@ -24,6 +24,7 @@
 ! =================================================================================
 
 program aoc_day2
+  use aoc_day2_mod
   implicit none
   ! Ponto de entrada: delega execução ao procedimento principal
   call run
