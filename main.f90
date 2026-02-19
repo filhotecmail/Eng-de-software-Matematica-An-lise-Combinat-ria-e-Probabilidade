@@ -23,13 +23,6 @@
 ! - Para intervalos sobrepostos, N deve ser deduplicado antes da soma.
 ! =================================================================================
 
-program aoc_day2
-  use aoc_day2_mod
-  implicit none
-  ! Ponto de entrada: delega execução ao procedimento principal
-  call run
-
-end program aoc_day2
 
 module aoc_day2_mod
   implicit none
@@ -215,3 +208,9 @@ contains
     print *, 'A Soma dos Pares repetidos: ', total
   end subroutine run
 end module aoc_day2_mod
+
+program aoc_day2
+  use aoc_day2_mod
+  implicit none
+  call run
+end program aoc_day2
