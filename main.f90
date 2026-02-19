@@ -145,7 +145,8 @@ contains
     type(interval_t), intent(in) :: intervals(:)
     integer, intent(in) :: count
     integer(ik), intent(out) :: total
-    integer :: k, idx, i
+    integer :: k, idx
+    integer(ik) :: i
     integer(ik) :: bk, xlo, xhi, lo_k, hi_k
     integer, parameter :: max_vals = 300000
     integer(ik), allocatable :: vals(:)
@@ -162,7 +163,7 @@ contains
         if (xlo < lo_k) xlo = lo_k
         if (xhi > hi_k) xhi = hi_k
         if (xlo <= xhi) then
-          do i = 0, xhi - xlo
+          do i = 0_ik, xhi - xlo
             if (nvals < max_vals) then
               nvals = nvals + 1
               vals(nvals) = (xlo + i) * bk
