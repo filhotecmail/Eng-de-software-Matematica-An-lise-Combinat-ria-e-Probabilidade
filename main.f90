@@ -93,13 +93,102 @@ contains
     count = n              ! Retorna quantidade de intervalos parseados
   end subroutine parse_line
 
+  pure function pow10(k) result(p)
+    integer, intent(in) :: k
+    integer(ik) :: p
+    integer :: i
+    p = 1_ik
+    do i = 1, k
+      p = p * 10_ik
+    end do
+  end function pow10
+
+  pure function ceil_div(a, b) result(c)
+    integer(ik), intent(in) :: a, b
+    integer(ik) :: c
+    if (b <= 0_ik) then
+      c = 0_ik
+    else
+      c = (a + b - 1_ik) / b
+    end if
+  end function ceil_div
+
+  recursive subroutine quicksort(a, l, r)
+    integer(ik), intent(inout) :: a(:)
+    integer, intent(in) :: l, r
+    integer(ik) :: pivot, tmp
+    integer :: i, j, m
+    if (l >= r) return
+    m = (l + r) / 2
+    pivot = a(m)
+    i = l
+    j = r
+    do
+      do while (a(i) < pivot)
+        i = i + 1
+      end do
+      do while (a(j) > pivot)
+        j = j - 1
+      end do
+      if (i <= j) then
+        tmp = a(i); a(i) = a(j); a(j) = tmp
+        i = i + 1
+        j = j - 1
+      end if
+      if (i > j) exit
+    end do
+    call quicksort(a, l, j)
+    call quicksort(a, i, r)
+  end subroutine quicksort
+
+  subroutine compute_total(intervals, count, total)
+    type(interval_t), intent(in) :: intervals(:)
+    integer, intent(in) :: count
+    integer(ik), intent(out) :: total
+    integer :: k, idx, i
+    integer(ik) :: bk, xlo, xhi, lo_k, hi_k
+    integer, parameter :: max_vals = 300000
+    integer(ik), allocatable :: vals(:)
+    integer :: nvals
+    allocate(vals(max_vals))
+    nvals = 0
+    do k = 1, 5
+      bk = pow10(k) + 1_ik
+      lo_k = pow10(k-1)
+      hi_k = pow10(k) - 1_ik
+      do idx = 1, count
+        xlo = ceil_div(intervals(idx)%lo, bk)
+        xhi = intervals(idx)%hi / bk
+        if (xlo < lo_k) xlo = lo_k
+        if (xhi > hi_k) xhi = hi_k
+        if (xlo <= xhi) then
+          do i = 0, xhi - xlo
+            if (nvals < max_vals) then
+              nvals = nvals + 1
+              vals(nvals) = (xlo + i) * bk
+            end if
+          end do
+        end if
+      end do
+    end do
+    if (nvals > 1) call quicksort(vals, 1, nvals)
+    total = 0_ik
+    do i = 1, nvals
+      if (i == 1 .or. vals(i) /= vals(i-1)) total = total + vals(i)
+    end do
+    deallocate(vals)
+  end subroutine compute_total
+
   subroutine run
     character(len=4096) :: input_line
     type(interval_t) :: intervals(1024)
     integer :: count
+    integer(ik) :: total
     ! Caminho absoluto para a entrada com uma linha de intervalos
     call read_input_line('c:\projetos de estudos\AdventofCode\202502\Enunciado do problema\Imput de dados par analise.txt', input_line)
     ! Converte a linha em vetor de intervalos [lo,hi]
     call parse_line(input_line, intervals, count)
+    call compute_total(intervals, count, total)
+    print *, total
   end subroutine run
 end module aoc_day2_mod
